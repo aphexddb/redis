@@ -14,7 +14,7 @@ if [[ -z "$PORT" ]]; then
     echo "Mesos environment variable for PORT0 not set, trying PORTS"
     if [[ -z "$PORTS" ]]; then
       echo "Mesos environment variable for PORTS not set, defaulting to 6379"
-      exit 1
+      redis_server 6379
     else
       redis_server $PORTS
     fi
