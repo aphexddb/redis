@@ -1,5 +1,5 @@
 #
-# Redis Dockerfile
+# Redis Dockerfile for Mesos
 #
 # https://github.com/dockerfile/redis
 #
@@ -30,8 +30,5 @@ VOLUME ["/data"]
 # Define working directory.
 WORKDIR /data
 
-# Define default command.
-CMD ["redis-server", "/etc/redis/redis.conf"]
-
-# Expose ports.
-EXPOSE 6379
+ADD redis-server.sh /
+RUN /redis-server.sh
