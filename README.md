@@ -20,6 +20,8 @@ Redis in clustered mode expects two ports to be open, the main port and that por
       "ports": [6379,16379]
     }
 
+    curl -X POST -H "Content-Type: application/json" http://marathon-master:8080/v2/apps -d@redis.json
+
 When launching the container Marathon will apply `$PORT0` and `$PORT1` environment variables to your the container with the random ports it chose. The startup script uses those values to launch Redis.
 
 ### Use with haproxy
