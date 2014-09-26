@@ -7,25 +7,25 @@
 # Pull base image.
 FROM dockerfile/ubuntu
 
-# Install Redis.
-RUN \
-  cd /tmp && \
-  wget http://download.redis.io/redis-stable.tar.gz && \
-  tar xvzf redis-stable.tar.gz && \
-  cd redis-stable && \
-  make && \
-  make install && \
-  cp -f src/redis-sentinel /usr/local/bin && \
-  mkdir -p /etc/redis && \
-  cp -f *.conf /etc/redis && \
-  rm -rf /tmp/redis-stable* && \
-  sed -i 's/^\(bind .*\)$/# \1/' /etc/redis/redis.conf && \
-  sed -i 's/^\(daemonize .*\)$/# \1/' /etc/redis/redis.conf && \
-  sed -i 's/^\(dir .*\)$/# \1\ndir \/data/' /etc/redis/redis.conf && \
-  sed -i 's/^\(logfile .*\)$/# \1/' /etc/redis/redis.conf
+# Install system dependencies
+RUN apt-get install -y gcc make g++ build-essential libc6-dev git
+
+# checkout the 3.0 (Cluster support) branch from official repo
+RUN (cd / && git clone -b 3.0 https://github.com/antirez/redis.git)
+
+# Build redis from source and install
+RUN (cd /redis && make && make install)
+
+# Add config
+RUN mkdir -p /data
+RUN mkdir -p /etc/redis
+ADD redis.conf /etc/redis/redis.conf
 
 # Define mountable directories.
 VOLUME ["/data"]
+
+# Redis clsuter MUST have it's port plus port+10,000 exposed for clustering
+# ex: EXPOSE [3679,13679]
 
 # Define working directory.
 WORKDIR /data
